@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comparativo de Planos — Pátio Triagem</title>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --accent: #15803d;
+            --accent-dark: #166534;
+            --blue: #2563eb;
+            --green: #16a34a;
+            --surface: #f8fafc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Inter, system-ui, sans-serif;
+            color: var(--ink);
+            line-height: 1.5;
+            background: #fff;
+        }
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.75rem 6rem;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.75rem;
+            align-items: start;
+        }
+        .main { min-width: 0; }
+        header {
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+        h1 {
+            margin: 0 0 0.35rem;
+            font-size: 1.65rem;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .tagline {
+            margin-top: 0.75rem;
+            font-size: 0.88rem;
+            color: var(--ink);
+        }
+        h2 {
+            font-size: 1.05rem;
+            margin: 1.75rem 0 0.75rem;
+            color: var(--ink);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.55rem 0.65rem;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th:first-child, td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+        thead th {
+            background: var(--surface);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .col-rec { background: rgba(21, 128, 61, 0.06); }
+        th.col-rec { background: rgba(21, 128, 61, 0.12); }
+        .yes { color: var(--green); font-weight: 700; }
+        .no { color: #94a3b8; }
+        .price-row td { font-weight: 700; font-size: 0.9rem; }
+        .price-row .col-rec { color: var(--accent-dark); }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.85rem;
+            margin: 1.25rem 0;
+        }
+        .card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+            text-align: left;
+            font: inherit;
+            color: inherit;
+            width: 100%;
+        }
+        .card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        }
+        .card:focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
+        .card.is-selected {
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(21, 128, 61, 0.18);
+        }
+        .card--rec:not(.is-selected) {
+            border-color: rgba(21, 128, 61, 0.45);
+        }
+        .card__label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+        }
+        .card__name {
+            margin: 0.25rem 0 0.5rem;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+        .card__price {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .card__sub {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+        .card__for {
+            margin: 0.65rem 0 0;
+            font-size: 0.8rem;
+            color: var(--ink);
+        }
+        .card__pick {
+            display: inline-block;
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-dark);
+        }
+        .card.is-selected .card__pick { color: var(--green); }
+        .badge-rec {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            margin-bottom: 0.35rem;
+        }
+        ul.features {
+            margin: 0.5rem 0 0;
+            padding-left: 1.1rem;
+            font-size: 0.8rem;
+        }
+        ul.features li { margin-bottom: 0.25rem; }
+        .addon-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            margin-bottom: 1rem;
+        }
+        .addon-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.75rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .addon-item:hover { border-color: #cbd5e1; background: var(--surface); }
+        .addon-item.is-checked {
+            border-color: var(--accent);
+            background: rgba(21, 128, 61, 0.04);
+        }
+        .addon-item.is-disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+        .addon-item input {
+            margin-top: 0.2rem;
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--accent);
+            flex-shrink: 0;
+        }
+        .addon-item__body { flex: 1; min-width: 0; }
+        .addon-item__name { font-size: 0.88rem; font-weight: 600; }
+        .addon-item__price { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+        .addon-item__hint { font-size: 0.72rem; color: var(--accent-dark); margin-top: 0.2rem; }
+        .checkout {
+            position: sticky;
+            top: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface);
+            padding: 1.1rem 1.15rem;
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+        }
+        .checkout__title { margin: 0 0 0.85rem; font-size: 1rem; font-weight: 800; }
+        .billing-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+            padding: 0.25rem;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .billing-toggle label { display: block; text-align: center; cursor: pointer; color: var(--muted); }
+        .billing-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+        .billing-toggle label span {
+            display: block;
+            border-radius: 8px;
+            padding: 0.45rem 0.5rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: background 0.15s, color 0.15s;
+        }
+        .billing-toggle input:checked + span { background: var(--accent); color: #fff; }
+        .checkout__empty { font-size: 0.85rem; color: var(--muted); margin: 0 0 1rem; }
+        .checkout__lines {
+            list-style: none;
+            margin: 0 0 1rem;
+            padding: 0;
+            font-size: 0.82rem;
+        }
+        .checkout__lines li {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.35rem 0;
+            border-bottom: 1px dashed var(--border);
+        }
+        .checkout__lines li:last-child { border-bottom: none; }
+        .checkout__lines .label { color: var(--muted); }
+        .checkout__lines .value { font-weight: 700; text-align: right; white-space: nowrap; }
+        .checkout__totals {
+            border-top: 2px solid var(--border);
+            padding-top: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .checkout__total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.75rem;
+            margin-bottom: 0.35rem;
+        }
+        .checkout__total-row--main { font-size: 1.05rem; font-weight: 800; }
+        .checkout__total-row--main .value { color: var(--accent); }
+        .checkout__total-row .label { font-size: 0.82rem; color: var(--muted); }
+        .checkout__total-row .value { font-weight: 700; text-align: right; }
+        .checkout__note { font-size: 0.72rem; color: var(--muted); margin: 0 0 0.85rem; line-height: 1.45; }
+        .checkout__actions { display: flex; flex-direction: column; gap: 0.45rem; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.6rem 0.85rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font: inherit;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .btn--primary:hover { filter: brightness(1.05); }
+        .btn:hover { border-color: #cbd5e1; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        .print-hint {
+            background: #ecfdf5;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.82rem;
+            margin-bottom: 1.25rem;
+        }
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(120%);
+            background: var(--ink);
+            color: #fff;
+            padding: 0.65rem 1rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            z-index: 100;
+            transition: transform 0.25s ease;
+            pointer-events: none;
+        }
+        .toast.is-visible { transform: translateX(-50%) translateY(0); }
+        @media print {
+            .print-hint, .checkout, .toast, .card__pick, .addon-list { display: none !important; }
+            .layout { display: block; padding: 0.5rem; max-width: none; }
+            .card { break-inside: avoid; cursor: default; }
+        }
+        @media (max-width: 960px) {
+            .layout { grid-template-columns: 1fr; padding-bottom: 1.5rem; }
+            .checkout {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: auto;
+                z-index: 50;
+                border-radius: 14px 14px 0 0;
+                max-height: 55vh;
+                overflow-y: auto;
+                box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.15);
+            }
+            .cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <div class="main">
+     
+        <header>
+            <h1>Pátio Triagem</h1>
+            <p class="subtitle">Comparativo comercial — 3 planos</p>
+            <p class="tagline">Gestão e cobrança de pátio para caminhões de grãos: agendamentos, entrada antecipada, cobrança por dia, devoluções e integração TBL.</p>
+        </header>
+
+        <h2>Escolha um plano</h2>
+        <p style="font-size:0.85rem;color:var(--muted);margin:0 0 0.75rem">Clique no plano desejado — o resumo actualiza automaticamente.</p>
+
+        <div class="cards" id="plan-cards">
+            <button type="button" class="card" data-plan="essencial" aria-pressed="false">
+                <div class="card__label">Plano 1</div>
+                <h3 class="card__name">Essencial</h3>
+                <div class="card__price">R$ 1.900</div>
+                <div class="card__sub">implantação + R$ 199/mês · ou R$ 5.499/ano</div>
+                <p class="card__for">Pátio pequeno, agendamento manual, sem integração TBL.</p>
+                <span class="card__pick">Seleccionar plano</span>
+            </button>
+            <button type="button" class="card card--rec" data-plan="profissional" aria-pressed="false">
+                <div class="card__label">Plano 2</div>
+                <h3 class="card__name">Profissional</h3>
+                <div class="card__price">R$ 3.800</div>
+                <div class="card__sub">implantação + R$ 399/mês · ou R$ 10.499/ano</div>
+                <p class="card__for">relatórios, CSV e equipe financeira.</p>
+                <span class="card__pick">Seleccionar plano</span>
+            </button>
+            <button type="button" class="card" data-plan="corporativo" aria-pressed="false">
+                <span class="badge-rec">Recomendado</span>
+                <div class="card__label">Plano 3</div>
+                <h3 class="card__name">Corporativo</h3>
+                <div class="card__price">R$ 5.899</div>
+                <div class="card__sub">implantação + R$ 599/mês · ou R$ 13.999/ano · <strong>10% desc.</strong></div>
+                <p class="card__for">Integração TBL, Alto volume, SLA 24 h, hospedagem e evolução prioritária. Desconto aplicado automaticamente no resumo.</p>
+                <span class="card__pick">Seleccionar plano</span>
+            </button>
+        </div>
+
+        <h2>Comparativo de funcionalidades</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Funcionalidade</th>
+                    <th>Essencial</th>
+                    <th class="col-rec">Profissional</th>
+                    <th>Corporativo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Dashboard operacional</td><td class="yes">Sim</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Agendamentos manuais (CRUD, filtros)</td><td class="yes">Sim</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Entrada no pátio + cálculo de antecipação</td><td class="yes">Sim</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Cobranças (pago / pendente / isento)</td><td class="yes">Sim</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Devoluções após liberação</td><td class="yes">Sim</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Integração agendamento TBL</td><td class="no">—</td><td class="col-rec yes">—</td><td class="yes">Sim</td></tr>
+                <tr><td>Relatórios + exportação CSV</td><td class="no">—</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Resumo financeiro com gráficos</td><td class="no">—</td><td class="col-rec yes">Sim</td><td class="yes">Sim</td></tr>
+                <tr><td>Hospedagem gerida (VPS + SSL)</td><td class="no">—</td><td class="col-rec no">—</td><td class="yes">Sim (1.º ano)</td></tr>
+                <tr><td>Hardening produção (HTTPS, backup)</td><td class="no">Básico</td><td class="col-rec">Padrão</td><td class="yes">Completo</td></tr>
+                <tr><td>Roadmap prioritário (cron, multi-pátio)</td><td class="no">—</td><td class="col-rec no">—</td><td class="yes">Aditivo</td></tr>
+                <tr><td>Treinamento da equipa</td><td>2 h</td><td class="col-rec">4 h</td><td>8h + manual</td></tr>
+                <tr><td>Suporte pós go-live</td><td>15 dias</td><td class="col-rec">30 dias</td><td>45 dias + SLA 24 h</td></tr>
+                <tr><td>Utilizadores incluídos</td><td>Até 5</td><td class="col-rec">Até 15</td><td>Ilimitados</td></tr>
+                <tr class="price-row"><td>Investimento — implantação</td><td>R$ 1.900</td><td class="col-rec">R$ 3.800</td><td>R$ 5.899</td></tr>
+                <tr class="price-row"><td>Mensalidade (suporte + updates)</td><td>R$ 199</td><td class="col-rec">R$ 399</td><td>R$ 599</td></tr>
+                <tr class="price-row"><td>Licença anual (10× mensal)</td><td>R$ 5.499</td><td class="col-rec">R$ 10.499</td><td>R$ 13.999</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size:0.78rem;color:var(--muted);margin:0">A tarifa R$/dia de antecipação no sistema é regra do pátio (cobrada ao transportador), não a mensalidade do software.</p>
+
+        <h2>Diferenciais</h2>
+        <ul class="features">
+            <li><strong>Cobrança automática</strong> — dias de antecipação × valor configurável</li>
+            <li><strong>Integração TBL real</strong> — menos digitação na portaria (Profissional+)</li>
+            <li><strong>Rastreabilidade</strong> — histórico de entradas, cobranças e devoluções</li>
+            <li><strong>Infra simples</strong> — PHP + MySQL, baixo custo de operação</li>
+        </ul>
+
+        <h2>Add-ons opcionais</h2>
+        <p style="font-size:0.85rem;color:var(--muted);margin:0 0 0.75rem">Marque os extras desejados — os valores entram no resumo.</p>
+        <div class="addon-list" id="addon-list"></div>
+
+        <footer>
+            Documento comercial — Pátio Triagem · Valores em R$ (BRL). Condições detalhadas na proposta formal gerada pelo simulador.
+        </footer>
+    </div>
+
+    <aside class="checkout" aria-live="polite" aria-label="Resumo da proposta">
+        <h2 class="checkout__title">Resumo da proposta</h2>
+        <div class="billing-toggle" role="radiogroup" aria-label="Forma de cobrança">
+            <label>
+                <input type="radio" name="billing" value="monthly" checked>
+                <span>Mensal</span>
+            </label>
+            <label>
+                <input type="radio" name="billing" value="annual">
+                <span>Anual</span>
+            </label>
+        </div>
+        <p class="checkout__empty" id="checkout-empty">Seleccione um plano para ver o investimento estimado.</p>
+        <ul class="checkout__lines" id="checkout-lines" hidden></ul>
+        <div class="checkout__totals" id="checkout-totals" hidden>
+            <div class="checkout__total-row checkout__total-row--main">
+                <span class="label">Investimento inicial</span>
+                <span class="value" id="total-initial">R$ 0</span>
+            </div>
+            <div class="checkout__total-row" id="row-recurring" hidden>
+                <span class="label">Recorrente</span>
+                <span class="value" id="total-recurring">R$ 0/mês</span>
+            </div>
+            <div class="checkout__total-row" id="row-year1" hidden>
+                <span class="label">Total estimado (1.º ano)</span>
+                <span class="value" id="total-year1">R$ 0</span>
+            </div>
+        </div>
+        <p class="checkout__note" id="checkout-note" hidden></p>
+        <div class="checkout__actions">
+            <button type="button" class="btn btn--primary" id="btn-generate" disabled>Gerar proposta comercial</button>
+            <button type="button" class="btn" id="btn-copy" disabled>Copiar resumo</button>
+            <button type="button" class="btn" id="btn-clear" disabled>Limpar selecção</button>
+        </div>
+    </aside>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="comercial-shared.js"></script>
+<script>
+(function () {
+    if (!window.ComercialShared) {
+        var err = document.createElement('p');
+        err.style.cssText = 'color:#b91c1c;background:#fef2f2;padding:0.75rem;border-radius:8px;font-size:0.9rem';
+        err.textContent = 'Erro: não foi possível carregar comercial-shared.js. Abra http://localhost/patio_triagem/docs/comercial/index.html com o XAMPP ligado.';
+        document.querySelector('.main').insertBefore(err, document.querySelector('.main').firstChild);
+        return;
+    }
+    var CS = window.ComercialShared;
+    var ADDONS = CS.ADDONS;
+    var state = { plan: null, addons: {}, billing: 'monthly' };
+    var planCards = document.getElementById('plan-cards');
+    var addonList = document.getElementById('addon-list');
+    var checkoutEmpty = document.getElementById('checkout-empty');
+    var checkoutLines = document.getElementById('checkout-lines');
+    var checkoutTotals = document.getElementById('checkout-totals');
+    var checkoutNote = document.getElementById('checkout-note');
+    var totalInitial = document.getElementById('total-initial');
+    var totalRecurring = document.getElementById('total-recurring');
+    var rowRecurring = document.getElementById('row-recurring');
+    var rowYear1 = document.getElementById('row-year1');
+    var totalYear1 = document.getElementById('total-year1');
+    var btnGenerate = document.getElementById('btn-generate');
+    var btnCopy = document.getElementById('btn-copy');
+    var btnClear = document.getElementById('btn-clear');
+    var toast = document.getElementById('toast');
+    var money = CS.money;
+    var moneyDec = CS.moneyDec;
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('is-visible');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () { toast.classList.remove('is-visible'); }, 2200);
+    }
+
+    function renderAddons() {
+        addonList.innerHTML = '';
+        ADDONS.forEach(function (addon) {
+            var disabled = state.plan && !CS.isAddonAvailable(addon, state.plan);
+            var checked = !!state.addons[addon.id] && !disabled;
+            if (disabled) delete state.addons[addon.id];
+            var label = document.createElement('label');
+            label.className = 'addon-item' + (checked ? ' is-checked' : '') + (disabled ? ' is-disabled' : '');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.value = addon.id;
+            input.checked = checked;
+            input.disabled = disabled;
+            var body = document.createElement('div');
+            body.className = 'addon-item__body';
+            body.innerHTML =
+                '<div class="addon-item__name">' + addon.name + '</div>' +
+                '<div class="addon-item__price">' + addon.label + '</div>' +
+                (disabled && addon.note ? '<div class="addon-item__hint">' + addon.note + '</div>' : '');
+            label.appendChild(input);
+            label.appendChild(body);
+            input.addEventListener('change', function () {
+                if (input.checked) state.addons[addon.id] = true;
+                else delete state.addons[addon.id];
+                renderAddons();
+                renderCheckout();
+            });
+            addonList.appendChild(label);
+        });
+    }
+
+    function renderCheckout() {
+        var data = CS.compute(state);
+        planCards.querySelectorAll('.card[data-plan]').forEach(function (card) {
+            var id = card.getAttribute('data-plan');
+            var selected = state.plan === id;
+            card.classList.toggle('is-selected', selected);
+            card.setAttribute('aria-pressed', selected ? 'true' : 'false');
+            card.querySelector('.card__pick').textContent = selected ? '✓ Plano seleccionado' : 'Seleccionar plano';
+        });
+        if (!data) {
+            checkoutEmpty.hidden = false;
+            checkoutLines.hidden = true;
+            checkoutTotals.hidden = true;
+            checkoutNote.hidden = true;
+            btnGenerate.disabled = true;
+            btnCopy.disabled = true;
+            btnClear.disabled = true;
+            return;
+        }
+        checkoutEmpty.hidden = true;
+        checkoutLines.hidden = false;
+        checkoutTotals.hidden = false;
+        checkoutNote.hidden = false;
+        btnGenerate.disabled = false;
+        btnCopy.disabled = false;
+        btnClear.disabled = false;
+        checkoutLines.innerHTML = data.lines.map(function (line) {
+            return '<li><span class="label">' + line.label + '</span><span class="value">' + line.value + '</span></li>';
+        }).join('');
+        totalInitial.textContent = money(data.initial);
+        if (data.recurring > 0) {
+            rowRecurring.hidden = false;
+            totalRecurring.textContent = moneyDec(data.recurring) + '/mês';
+        } else {
+            rowRecurring.hidden = true;
+        }
+        rowYear1.hidden = false;
+        totalYear1.textContent = money(Math.round(data.year1));
+        if (state.billing === 'monthly') {
+            checkoutNote.textContent = 'Investimento inicial = implantação + add-ons únicos. Recorrente = mensalidade + add-ons mensais. Total 1.º ano = inicial + 12 meses.';
+        } else {
+            checkoutNote.textContent = 'Modo anual: licença equivalente a 10 mensalidades + add-ons únicos. Recorrente = apenas add-ons com mensalidade (ex.: PIX).';
+        }
+    }
+
+    function buildCopyText() {
+        var data = CS.compute(state);
+        if (!data) return '';
+        var lines = ['Proposta — Pátio Triagem', ''];
+        data.lines.forEach(function (l) { lines.push(l.label + ': ' + l.value); });
+        lines.push('');
+        lines.push('Investimento inicial: ' + money(data.initial));
+        if (data.recurring > 0) lines.push('Recorrente: ' + moneyDec(data.recurring) + '/mês');
+        lines.push('Total estimado (1.º ano): ' + money(Math.round(data.year1)));
+        lines.push('');
+        lines.push('Valores em R$ (BRL). Sujeito a proposta formal.');
+        return lines.join('\n');
+    }
+
+    function getBilling() {
+        var checked = document.querySelector('input[name="billing"]:checked');
+        return checked ? checked.value : 'monthly';
+    }
+
+    function buildProposalUrl(planId) {
+        var addons = Object.keys(state.addons).filter(function (id) { return state.addons[id]; });
+        var q = 'plan=' + encodeURIComponent(planId) + '&billing=' + encodeURIComponent(getBilling());
+        if (addons.length) q += '&addons=' + encodeURIComponent(addons.join(','));
+        return 'proposta.html?' + q;
+    }
+
+    planCards.addEventListener('click', function (e) {
+        var card = e.target.closest('.card[data-plan]');
+        if (!card) return;
+        state.plan = card.getAttribute('data-plan');
+        renderAddons();
+        renderCheckout();
+    });
+
+    document.querySelectorAll('input[name="billing"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            state.billing = this.value;
+            renderCheckout();
+        });
+    });
+
+    btnGenerate.addEventListener('click', function () {
+        if (!state.plan) return;
+        state.billing = getBilling();
+        try { CS.saveState(state); } catch (e) { /* segue com URL */ }
+        window.location.href = buildProposalUrl(state.plan);
+    });
+
+    btnCopy.addEventListener('click', function () {
+        var text = buildCopyText();
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () { showToast('Resumo copiado!'); });
+        } else {
+            showToast('Não foi possível copiar.');
+        }
+    });
+
+    btnClear.addEventListener('click', function () {
+        state.plan = null;
+        state.addons = {};
+        renderAddons();
+        renderCheckout();
+    });
+
+    function restoreState() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var planId = urlParams.get('plan');
+        var saved = CS.loadState();
+        if (planId && CS.PLANS[planId]) {
+            state.plan = planId;
+            state.billing = urlParams.get('billing') === 'annual' ? 'annual' : 'monthly';
+            (urlParams.get('addons') || '').split(',').filter(Boolean).forEach(function (id) {
+                state.addons[id] = true;
+            });
+        } else if (saved) {
+            state.plan = saved.plan;
+            state.billing = saved.billing;
+            state.addons = saved.addons || {};
+        }
+        if (state.plan || state.billing !== 'monthly' || Object.keys(state.addons).length) {
+            var billingRadio = document.querySelector('input[name="billing"][value="' + state.billing + '"]');
+            if (billingRadio) billingRadio.checked = true;
+            renderAddons();
+            renderCheckout();
+        }
+    }
+
+    restoreState();
+    renderAddons();
+    renderCheckout();
+})();
+</script>
+</body>
+</html>
